@@ -27,8 +27,8 @@ class Pokemon {
       weight: json['weight'],
     );
   }
-// Getters
+// devuelve el nombre con la primera letra en mayuscula
   String get capitalizedName => name[0].toUpperCase() + name.substring(1);
-
+// develve el id formateado con ceros a la izquierda
   String get formattedId => '#${id.toString().padLeft(3, '0')}';
 }

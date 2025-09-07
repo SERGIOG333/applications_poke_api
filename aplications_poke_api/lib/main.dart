@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'services/pokemon_service.dart';
+import 'models/pokemon.dart';
+import 'widgets/pokemon_list.dart';
 
 void main() {
   runApp(const MyApp());
@@ -7,70 +10,121 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'PokeAPI App',
       theme: ThemeData(
-        
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const PokemonHomePage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  
-
-  final String title;
+class PokemonHomePage extends StatefulWidget {
+  const PokemonHomePage({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<PokemonHomePage> createState() => _PokemonHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _PokemonHomePageState extends State<PokemonHomePage> {
+  final PokemonService _pokemonService = PokemonService();
+  final List<Pokemon> _pokemons = [];
+  bool _isLoading = false;
+  int _offset = 0;
+  final int _limit = 20;
 
-  void _incrementCounter() {
+  @override
+  void initState() {
+    super.initState();
+    _loadPokemons();
+  }
+
+  Future<void> _loadPokemons() async {
+    if (_isLoading) return;
+
     setState(() {
-      
-      _counter++;
+      _isLoading = true;
     });
+
+    try {
+      final newPokemons = await _pokemonService.fetchPokemons(
+        limit: _limit,
+        offset: _offset,
+      );
+
+      setState(() {
+        _pokemons.addAll(newPokemons);
+        _offset += _limit;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      _showErrorSnackbar(e.toString());
+    }
+  }
+
+  void _showErrorSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Error: $message'),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+
+  void _onPokemonTap(Pokemon pokemon){
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(pokemon.capitalizedName),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.network(pokemon.imageUrl),
+            const SizedBox(height: 16),
+            Text('ID: ${pokemon.formattedId}'),
+            Text('Height: ${pokemon.height/10}m'),
+            Text('Weight: ${pokemon.weight/10}kg'),
+            Text('Types: ${pokemon.types.join(', ')}'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       appBar: AppBar(
-        
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        
-        title: Text(widget.title),
+        title: const Text('PokeAPI App'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Colors.white,
       ),
-      body: Center(
-        
-        child: Column(
-          
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+      body: _pokemons.isEmpty && _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : PokemonList(
+              pokemons: _pokemons,
+              onPokemonTap: _onPokemonTap,
+              isLoading: _isLoading,
+              onLoadMore : _loadPokemons,  
             ),
-          ],
-        ),
-      ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+        onPressed: _loadPokemons,
+        child: const Icon(Icons.refresh),
+      ),
     );
   }
+
 }

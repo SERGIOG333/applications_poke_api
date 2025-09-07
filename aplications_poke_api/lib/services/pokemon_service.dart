@@ -9,14 +9,14 @@ class PokemonService {
       receiveTimeout: const Duration(seconds: 10),
     ),
   ); // BaseOptions // Dio
-
+// metodo para obtener una lista de pokemons con paginacion
     Future<List<Pokemon>> fetchPokemons({int limit = 20, int offset = 0}) async {
       try {
       final response = await _dio.get(
         'pokemon',
         queryParameters: {'limit': limit, 'offset': offset},
       );
-
+//procesar la respuesta
       if (response.statusCode == 200) {
         final List<dynamic> results = response.data['results'];
 
@@ -41,7 +41,7 @@ class PokemonService {
       }
     }
   }
-
+// metodo para obtener un pokemon por id
   Future<Pokemon> fetchPokemonById(int id) async {
     try {
       final response = await _dio.get('pokemon/$id');
