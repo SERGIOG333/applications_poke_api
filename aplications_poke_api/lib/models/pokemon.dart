@@ -5,7 +5,7 @@ class Pokemon {
   final List<String> types;
   final int height;
   final int weight;
-// Constructor
+  // Constructor
   Pokemon({
     required this.id,
     required this.name,
@@ -14,7 +14,7 @@ class Pokemon {
     required this.height,
     required this.weight,
   });
-// From JSON
+  // From JSON
   factory Pokemon.fromJson(Map<String, dynamic> json) {
     return Pokemon(
       id: json['id'],
@@ -27,8 +27,8 @@ class Pokemon {
       weight: json['weight'],
     );
   }
-// devuelve el nombre con la primera letra en mayuscula
+  // devuelve el nombre con la primera letra en mayuscula
   String get capitalizedName => name[0].toUpperCase() + name.substring(1);
-// develve el id formateado con ceros a la izquierda
+  // develve el id formateado con ceros a la izquierda
   String get formattedId => '#${id.toString().padLeft(3, '0')}';
 }

@@ -71,14 +71,11 @@ class _PokemonHomePageState extends State<PokemonHomePage> {
 
   void _showErrorSnackbar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Error: $message'),
-        backgroundColor: Colors.red,
-      ),
+      SnackBar(content: Text('Error: $message'), backgroundColor: Colors.red),
     );
   }
 
-  void _onPokemonTap(Pokemon pokemon){
+  void _onPokemonTap(Pokemon pokemon) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -89,8 +86,8 @@ class _PokemonHomePageState extends State<PokemonHomePage> {
             Image.network(pokemon.imageUrl),
             const SizedBox(height: 16),
             Text('ID: ${pokemon.formattedId}'),
-            Text('Height: ${pokemon.height/10}m'),
-            Text('Weight: ${pokemon.weight/10}kg'),
+            Text('Height: ${pokemon.height / 10}m'),
+            Text('Weight: ${pokemon.weight / 10}kg'),
             Text('Types: ${pokemon.types.join(', ')}'),
           ],
         ),
@@ -118,7 +115,7 @@ class _PokemonHomePageState extends State<PokemonHomePage> {
               pokemons: _pokemons,
               onPokemonTap: _onPokemonTap,
               isLoading: _isLoading,
-              onLoadMore : _loadPokemons,  
+              onLoadMore: _loadPokemons,
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: _loadPokemons,
@@ -126,5 +123,4 @@ class _PokemonHomePageState extends State<PokemonHomePage> {
       ),
     );
   }
-
 }

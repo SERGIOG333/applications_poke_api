@@ -15,7 +15,7 @@ class PokemonList extends StatelessWidget {
     this.isLoading = false,
     this.onLoadMore,
   });
-// widgets principal 
+  // widgets principal
   @override
   Widget build(BuildContext context) {
     return NotificationListener<ScrollNotification>(
@@ -28,7 +28,7 @@ class PokemonList extends StatelessWidget {
 
         return false;
       },
-      //contenido de la pantalla visual 
+      //contenido de la pantalla visual
       child: Column(
         children: [
           Expanded(
@@ -41,7 +41,7 @@ class PokemonList extends StatelessWidget {
               ), // SliverGridDelegateWithFixedCrossAxisCount
               padding: const EdgeInsets.all(8),
               itemCount: pokemons.length + (isLoading ? 1 : 0),
-// construccion de item               
+              // construccion de item
               itemBuilder: (context, index) {
                 if (index == pokemons.length) {
                   return Center(child: CircularProgressIndicator());
